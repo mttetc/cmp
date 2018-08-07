@@ -17,12 +17,14 @@
             return JSON.parse(window.localStorage.getItem(name));
         }
     };
+    var top_domain = location.hostname.split('.').reverse();
+    top_domain = top_domain[1].length > 2 ? "." + top_domain[1] + "." + top_domain[0] : location.hostname;
     var _consent = function(arg){
         // Set consent
         if(arg != undefined) {
             var d = new Date();
             d.setTime(d.getTime() + 34128000000); // 13 mois
-            document.cookie = cn + '_consent' + "=" + _consent_family(arg) + ";" + "expires="+ d.toUTCString() + ";path=/";
+            document.cookie = cn + '_consent' + "=" + _consent_family(arg) + ";expires="+ d.toUTCString() + ";domain=" + top_domain + ";path=/";
         }
         return _local_consent(cn+'-consent', arg)
     };
@@ -218,6 +220,8 @@
                 document.querySelector('#scmp-parameters').classList.remove('scmp-hidden');
                 document.querySelector('#scmp-overlay').classList.remove('scmp-hidden');
 
+                document.querySelector('#scmp-btn-validation').setAttribute('data-trkcmp', 'accepter2');
+
                 document.body.classList.add('scmp-no-scroll');
             });
 
@@ -237,13 +241,14 @@
 
                     document.querySelector('.scmp-list-parameters').classList.remove('retention');
 
+                    document.querySelector('#scmp-btn-validation').setAttribute('data-trkcmp', 'accepter1');
+                    document.querySelector('label[for="publicite"]').setAttribute('data-trkcmp', 'taquet-pub');
                     consent = __cmp.save_consent(consent);
                     retention = false;
                     return;
                 }
                 if(!consent.advertising) {
                     document.querySelector('#scmp-popin').classList.add('scmp-parameters-open');
-
 
                     document.querySelector('#scmp-parameters').classList.remove('scmp-hidden');
                     document.querySelector('#scmp-overlay').classList.remove('scmp-hidden');
@@ -253,8 +258,10 @@
                     document.querySelector('#scmp-description').classList.add('scmp-hidden');
                     document.querySelector('#scmp-header').classList.add('scmp-hidden');
 
-
                     document.querySelector('.scmp-list-parameters').classList.add('retention');
+
+                    document.querySelector('#scmp-btn-validation').setAttribute('data-trkcmp', 'accepter3');
+                    document.querySelector('label[for="publicite"]').setAttribute('data-trkcmp', 'taquet-pub2');
                     retention = true;
                     return;
                 }
@@ -331,8 +338,6 @@
                 }, 200, { trailing: true, leading: true });
                 window.addEventListener('scroll', evt_scroll);
             }
-        } else {
-            dataLayer.push({'event':cn+'Change'});
         }
 
     };
